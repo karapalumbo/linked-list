@@ -18,6 +18,17 @@ class LinkedList {
     for (let val of vals) this.push(val);
   }
 
+  _get(idx) {
+    let current = this.head;
+    let count = 0;
+
+    while (current !== null && count != idx) {
+      count += 1;
+      current = current.next;
+    }
+    return current;
+  }
+
   /** push(val): add new value to end of list. */
 
   push(val) {
@@ -30,7 +41,7 @@ class LinkedList {
       this.tail.next = newNode;
       this.tail = newNode;
     }
-    this.lengh += 1;
+    this.length += 1;
   }
 
   /** unshift(val): add new value to start of list. */
@@ -52,31 +63,114 @@ class LinkedList {
 
   /** pop(): return & remove last item. */
 
-  pop() {}
+  pop() {
+    return this.removeAt(this.length - 1);
+  }
 
   /** shift(): return & remove first item. */
 
-  shift() {}
+  shift() {
+    return this.removeAt(0);
+  }
 
   /** getAt(idx): get val at idx. */
 
-  getAt(idx) {}
+  getAt(idx) {
+    if (idx >= this.length) {
+      throw new Error("Invalid index.");
+    }
+    return this._get(idx).val;
+  }
 
   /** setAt(idx, val): set val at idx to val */
 
-  setAt(idx, val) {}
+  setAt(idx, val) {
+    if (idx >= this.length) {
+      throw new Error("Invalid index.");
+    }
+    let current = this._get(idx);
+    current.val = val;
+  }
 
   /** insertAt(idx, val): add node w/val before idx. */
 
-  insertAt(idx, val) {}
+  insertAt(idx, val) {
+    if (idx > this.length) {
+      throw new Error("Invalid index.");
+    }
+
+    if (idx === 0) return this.unshift(val);
+    if (idx === this.length) return this.push(val);
+
+    let prev = this._get(idx - 1);
+
+    let newNode = new Node(val);
+    newNode.next = prev.next;
+    prev.next = newNode;
+
+    this.length += 1;
+  }
 
   /** removeAt(idx): return & remove item at idx, */
 
-  removeAt(idx) {}
+  removeAt(idx) {
+    if (idx >= this.length) {
+      throw new Error("Invalid index.");
+    }
+  }
 
   /** average(): return an average of all values in the list */
 
-  average() {}
+  average() {
+    if (this.length === 0) {
+      return 0;
+    }
+
+    let total = 0;
+    let current = this.head;
+
+    while (current) {
+      total += current.val;
+      current = current.next;
+    }
+
+    return total / this.length;
+  }
+
+  removeAt(idx) {
+    if (idx >= this.length || idx < 0) {
+      throw new Error("Invalid index.");
+    }
+
+    // special case: remove first item
+
+    if (idx === 0) {
+      let val = this.head.val;
+      this.head = this.head.next;
+      this.length -= 1;
+      if (this.length < 2) this.tail = this.head;
+      return val;
+    }
+
+    let prev = this._get(idx - 1);
+
+    // special case: remove tail
+
+    if (idx === this.length - 1) {
+      let val = prev.next.val;
+      prev.next = null;
+      this.tail = prev;
+      this.length -= 1;
+      return val;
+    }
+
+    // normal case: remove in middle
+
+    let val = prev.next.val;
+    prev.next = prev.next.next;
+    this.length -= 1;
+    return val;
+  }
 }
 
 module.exports = LinkedList;
